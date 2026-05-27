@@ -1,7 +1,6 @@
 package table
 
 import (
-	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 	"github.com/ymtdzzz/otel-tui/tuiexporter/internal/telemetry"
 )
@@ -40,41 +39,22 @@ type MetricDataForTable struct {
 }
 
 func NewMetricDataForTable(metrics *[]*telemetry.MetricData) MetricDataForTable {
-	return MetricDataForTable{
-		metrics: metrics,
-		mapper:  defaultMetricCellMappers,
-	}
+	_ = "STUB: not implemented"
+	return *new(MetricDataForTable)
 }
 
 // implementations for tview Virtual Table
 // see: https://github.com/rivo/tview/wiki/VirtualTable
 func (m MetricDataForTable) GetCell(row, column int) *tview.TableCell {
-	if row == 0 {
-		return m.getHeaderCell(column)
-	}
-	if row > 0 && row <= len(*m.metrics) {
-		return getCellFromData(m.mapper, (*m.metrics)[row-1], column)
-	}
-	return tview.NewTableCell("N/A")
+	_ = "STUB: not implemented"
+	return nil
 }
 
-func (m MetricDataForTable) GetRowCount() int {
-	return len(*m.metrics) + 1
-}
+func (m MetricDataForTable) GetRowCount() int { _ = "STUB: not implemented"; return 0 }
 
-func (m MetricDataForTable) GetColumnCount() int {
-	return len(m.mapper)
-}
+func (m MetricDataForTable) GetColumnCount() int { _ = "STUB: not implemented"; return 0 }
 
 func (m MetricDataForTable) getHeaderCell(column int) *tview.TableCell {
-	cell := tview.NewTableCell("N/A").
-		SetSelectable(false).
-		SetTextColor(tcell.ColorYellow)
-	h, ok := m.mapper[column]
-	if !ok {
-		return cell
-	}
-	cell.SetText(h.header)
-
-	return cell
+	_ = "STUB: not implemented"
+	return nil
 }

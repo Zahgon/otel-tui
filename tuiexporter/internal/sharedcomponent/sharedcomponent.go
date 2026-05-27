@@ -8,7 +8,6 @@ package sharedcomponent // import "go.opentelemetry.io/collector/internal/shared
 
 import (
 	"context"
-	"slices"
 	"sync"
 
 	"go.opentelemetry.io/collector/component"
@@ -16,9 +15,8 @@ import (
 )
 
 func NewMap[K comparable, V component.Component]() *Map[K, V] {
-	return &Map[K, V]{
-		components: map[K]*Component[V]{},
-	}
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // Map keeps reference of all created instances for a given shared key such as a component configuration.
@@ -30,27 +28,8 @@ type Map[K comparable, V component.Component] struct {
 // LoadOrStore returns the already created instance if exists, otherwise creates a new instance
 // and adds it to the map of references.
 func (m *Map[K, V]) LoadOrStore(key K, create func() (V, error), telemetrySettings *component.TelemetrySettings) (*Component[V], error) {
-	m.lock.Lock()
-	defer m.lock.Unlock()
-	if c, ok := m.components[key]; ok {
-		return c, nil
-	}
-	comp, err := create()
-	if err != nil {
-		return nil, err
-	}
-
-	newComp := &Component[V]{
-		component: comp,
-		removeFunc: func() {
-			m.lock.Lock()
-			defer m.lock.Unlock()
-			delete(m.components, key)
-		},
-		telemetry: telemetrySettings,
-	}
-	m.components[key] = newComp
-	return newComp, nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 // Component ensures that the wrapped component is started and stopped only once.
@@ -69,41 +48,21 @@ type Component[V component.Component] struct {
 
 // Unwrap returns the original component.
 func (c *Component[V]) Unwrap() V {
-	return c.component
+	_ = "STUB: not implemented"
+
+	// Start starts the underlying component if it never started before.
+	return *new(V)
 }
 
-// Start starts the underlying component if it never started before.
 func (c *Component[V]) Start(ctx context.Context, host component.Host) error {
-	if c.hostWrapper == nil {
-		var err error
-		c.startOnce.Do(func() {
-			c.hostWrapper = &hostWrapper{
-				host:           host,
-				sources:        make([]componentstatus.Reporter, 0),
-				previousEvents: make([]*componentstatus.Event, 0),
-			}
-			statusReporter, isStatusReporter := host.(componentstatus.Reporter)
-			if isStatusReporter {
-				c.hostWrapper.addSource(statusReporter)
-			}
-
-			// It's important that status for a shared component is reported through its
-			// telemetry settings to keep status in sync and avoid race conditions. This logic duplicates
-			// and takes priority over the automated status reporting that happens in graph, making the
-			// status reporting in graph a no-op.
-			c.hostWrapper.Report(componentstatus.NewEvent(componentstatus.StatusStarting))
-			if err = c.component.Start(ctx, c.hostWrapper); err != nil {
-				c.hostWrapper.Report(componentstatus.NewPermanentErrorEvent(err))
-			}
-		})
-		return err
-	}
-	statusReporter, isStatusReporter := host.(componentstatus.Reporter)
-	if isStatusReporter {
-		c.hostWrapper.addSource(statusReporter)
-	}
+	_ = "STUB: not implemented"
 	return nil
 }
+
+// It's important that status for a shared component is reported through its
+// telemetry settings to keep status in sync and avoid race conditions. This logic duplicates
+// and takes priority over the automated status reporting that happens in graph, making the
+// status reporting in graph a no-op.
 
 var _ component.Host = (*hostWrapper)(nil)
 var _ componentstatus.Reporter = (*hostWrapper)(nil)
@@ -116,56 +75,22 @@ type hostWrapper struct {
 }
 
 func (h *hostWrapper) GetExtensions() map[component.ID]component.Component {
-	return h.host.GetExtensions()
+	_ = "STUB: not implemented"
+	return nil
 }
 
 func (h *hostWrapper) Report(e *componentstatus.Event) {
+	_ = "STUB: not implemented"
 	// Only remember an event if it will be emitted and it has not been sent already.
-	h.lock.Lock()
-	if len(h.sources) > 0 && !slices.Contains(h.previousEvents, e) {
-		h.previousEvents = append(h.previousEvents, e)
-	}
-	h.lock.Unlock()
-
-	h.lock.Lock()
-	for _, s := range h.sources {
-		s.Report(e)
-	}
-	h.lock.Unlock()
+	return
 }
 
-func (h *hostWrapper) addSource(s componentstatus.Reporter) {
-	h.lock.Lock()
-	for _, e := range h.previousEvents {
-		s.Report(e)
-	}
-	h.lock.Unlock()
-
-	h.lock.Lock()
-	h.sources = append(h.sources, s)
-	h.lock.Unlock()
-}
+func (h *hostWrapper) addSource(s componentstatus.Reporter) { _ = "STUB: not implemented"; return }
 
 // Shutdown shuts down the underlying component.
-func (c *Component[V]) Shutdown(ctx context.Context) error {
-	var err error
-	c.stopOnce.Do(func() {
-		// It's important that status for a shared component is reported through its
-		// telemetry settings to keep status in sync and avoid race conditions. This logic duplicates
-		// and takes priority over the automated status reporting that happens in graph, making the
-		// status reporting in graph a no-op.
-		if c.hostWrapper != nil {
-			c.hostWrapper.Report(componentstatus.NewEvent(componentstatus.StatusStopping))
-		}
-		err = c.component.Shutdown(ctx)
-		if c.hostWrapper != nil {
-			if err != nil {
-				c.hostWrapper.Report(componentstatus.NewPermanentErrorEvent(err))
-			} else {
-				c.hostWrapper.Report(componentstatus.NewEvent(componentstatus.StatusStopped))
-			}
-		}
-		c.removeFunc()
-	})
-	return err
-}
+func (c *Component[V]) Shutdown(ctx context.Context) error { _ = "STUB: not implemented"; return nil }
+
+// It's important that status for a shared component is reported through its
+// telemetry settings to keep status in sync and avoid race conditions. This logic duplicates
+// and takes priority over the automated status reporting that happens in graph, making the
+// status reporting in graph a no-op.

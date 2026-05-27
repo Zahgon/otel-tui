@@ -6,7 +6,6 @@ import (
 	"github.com/ymtdzzz/otel-tui/tuiexporter/internal/sharedcomponent"
 	"go.opentelemetry.io/collector/component"
 	"go.opentelemetry.io/collector/exporter"
-	"go.opentelemetry.io/collector/exporter/exporterhelper"
 )
 
 const (
@@ -14,81 +13,26 @@ const (
 )
 
 // NewFactory creates a new TUI exporter factory.
-func NewFactory() exporter.Factory {
-	return exporter.NewFactory(
-		component.MustNewType("tui"),
-		createDefaultConfig,
-		exporter.WithTraces(createTraces, stability),
-		exporter.WithMetrics(createMetrics, stability),
-		exporter.WithLogs(createLogs, stability),
-	)
-}
+func NewFactory() exporter.Factory { _ = "STUB: not implemented"; return *new(exporter.Factory) }
 
 func createDefaultConfig() component.Config {
-	return &Config{}
+	_ = "STUB: not implemented"
+	return *new(component.Config)
 }
 
 func createTraces(ctx context.Context, set exporter.Settings, cfg component.Config) (exporter.Traces, error) {
-	oCfg := cfg.(*Config)
-
-	e, err := exporters.LoadOrStore(
-		oCfg,
-		func() (*tuiExporter, error) {
-			return newTuiExporter(oCfg)
-		},
-		&set.TelemetrySettings,
-	)
-	if err != nil {
-		return nil, err
-	}
-
-	return exporterhelper.NewTraces(ctx, set, oCfg,
-		e.Unwrap().pushTraces,
-		exporterhelper.WithStart(e.Start),
-		exporterhelper.WithShutdown(e.Shutdown),
-	)
+	_ = "STUB: not implemented"
+	return *new(exporter.Traces), nil
 }
 
 func createMetrics(ctx context.Context, set exporter.Settings, cfg component.Config) (exporter.Metrics, error) {
-	oCfg := cfg.(*Config)
-
-	e, err := exporters.LoadOrStore(
-		oCfg,
-		func() (*tuiExporter, error) {
-			return newTuiExporter(oCfg)
-		},
-		&set.TelemetrySettings,
-	)
-	if err != nil {
-		return nil, err
-	}
-
-	return exporterhelper.NewMetrics(ctx, set, oCfg,
-		e.Unwrap().pushMetrics,
-		exporterhelper.WithStart(e.Start),
-		exporterhelper.WithShutdown(e.Shutdown),
-	)
+	_ = "STUB: not implemented"
+	return *new(exporter.Metrics), nil
 }
 
 func createLogs(ctx context.Context, set exporter.Settings, cfg component.Config) (exporter.Logs, error) {
-	oCfg := cfg.(*Config)
-
-	e, err := exporters.LoadOrStore(
-		oCfg,
-		func() (*tuiExporter, error) {
-			return newTuiExporter(oCfg)
-		},
-		&set.TelemetrySettings,
-	)
-	if err != nil {
-		return nil, err
-	}
-
-	return exporterhelper.NewLogs(ctx, set, oCfg,
-		e.Unwrap().pushLogs,
-		exporterhelper.WithStart(e.Start),
-		exporterhelper.WithShutdown(e.Shutdown),
-	)
+	_ = "STUB: not implemented"
+	return *new(exporter.Logs), nil
 }
 
 // This is the map of already created OTLP receivers for particular configurations.

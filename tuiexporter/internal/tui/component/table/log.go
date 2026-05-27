@@ -1,7 +1,6 @@
 package table
 
 import (
-	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 	"github.com/ymtdzzz/otel-tui/tuiexporter/internal/telemetry"
 )
@@ -88,83 +87,39 @@ type LogDataForTable struct {
 
 // NewLogDataForTable creates a new LogDataForTable.
 func NewLogDataForTable(logs *[]*telemetry.LogData) LogDataForTable {
-	l := LogDataForTable{
-		logs:   logs,
-		mapper: defaultLogCellMappers,
-	}
-	l.updateTimestampMapper()
-
-	return l
+	_ = "STUB: not implemented"
+	return *new(LogDataForTable)
 }
 
 // NewLogDataForTableForTimeline creates a new LogDataForTable for timeline page.
 func NewLogDataForTableForTimeline(logs *[]*telemetry.LogData) LogDataForTable {
-	l := LogDataForTable{
-		logs:   logs,
-		mapper: logCellMappersForTimeline,
-	}
-	l.updateTimestampMapper()
-
-	return l
+	_ = "STUB: not implemented"
+	return *new(LogDataForTable)
 }
 
 // SetFullDatetime sets whether to display full datetime or not
-func (l *LogDataForTable) SetFullDatetime(full bool) {
-	l.isFullDatetime = full
-	l.updateTimestampMapper()
-}
+func (l *LogDataForTable) SetFullDatetime(full bool) { _ = "STUB: not implemented"; return }
 
 // IsFullDatetime returns whether to display full datetime or not
-func (l LogDataForTable) IsFullDatetime() bool {
-	return l.isFullDatetime
-}
+func (l LogDataForTable) IsFullDatetime() bool { _ = "STUB: not implemented"; return false }
 
-func (l *LogDataForTable) updateTimestampMapper() {
-	for k, m := range l.mapper {
-		if m.header == "Timestamp" {
-			m.getTextRowFn = func(data *telemetry.LogData) string {
-				return data.GetTimestampText(l.isFullDatetime)
-			}
-			l.mapper[k] = m
-			break
-		}
-	}
-}
+func (l *LogDataForTable) updateTimestampMapper() { _ = "STUB: not implemented"; return }
 
 // implementation for tableModalMapper interface
-func (l *LogDataForTable) GetColumnIdx() int {
-	return len(l.mapper) - 1
-}
+func (l *LogDataForTable) GetColumnIdx() int { _ = "STUB: not implemented"; return 0 }
 
 // implementations for tview Virtual Table
 // see: https://github.com/rivo/tview/wiki/VirtualTable
 func (l LogDataForTable) GetCell(row, column int) *tview.TableCell {
-	if row == 0 {
-		return l.getHeaderCell(column)
-	}
-	if row > 0 && row <= len(*l.logs) {
-		return getCellFromData(l.mapper, (*l.logs)[row-1], column)
-	}
-	return tview.NewTableCell("N/A")
+	_ = "STUB: not implemented"
+	return nil
 }
 
-func (l LogDataForTable) GetRowCount() int {
-	return len(*l.logs) + 1
-}
+func (l LogDataForTable) GetRowCount() int { _ = "STUB: not implemented"; return 0 }
 
-func (l LogDataForTable) GetColumnCount() int {
-	return len(l.mapper)
-}
+func (l LogDataForTable) GetColumnCount() int { _ = "STUB: not implemented"; return 0 }
 
 func (l LogDataForTable) getHeaderCell(column int) *tview.TableCell {
-	cell := tview.NewTableCell("N/A").
-		SetSelectable(false).
-		SetTextColor(tcell.ColorYellow)
-	h, ok := l.mapper[column]
-	if !ok {
-		return cell
-	}
-	cell.SetText(h.header)
-
-	return cell
+	_ = "STUB: not implemented"
+	return nil
 }

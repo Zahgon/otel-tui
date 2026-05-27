@@ -13,26 +13,15 @@ func Init(
 	showModalFn func(tview.Primitive, string) *tview.TextView,
 	hideModalFn func(tview.Primitive),
 ) {
-	focusFn = setFocusFn
-	showMFn = showModalFn
-	hideMFn = hideModalFn
+	_ = "STUB: not implemented"
+	return
 }
 
-func Focus(primitive tview.Primitive) {
-	if focusFn != nil {
-		focusFn(primitive)
-	}
-}
+func Focus(primitive tview.Primitive) { _ = "STUB: not implemented"; return }
 
 func ShowModal(primitive tview.Primitive, title string) *tview.TextView {
-	if showMFn != nil {
-		return showMFn(primitive, title)
-	}
-	return tview.NewTextView()
+	_ = "STUB: not implemented"
+	return nil
 }
 
-func HideModal(primitive tview.Primitive) {
-	if hideMFn != nil {
-		hideMFn(primitive)
-	}
-}
+func HideModal(primitive tview.Primitive) { _ = "STUB: not implemented"; return }

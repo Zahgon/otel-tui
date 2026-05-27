@@ -1,7 +1,6 @@
 package table
 
 import (
-	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 	"github.com/ymtdzzz/otel-tui/tuiexporter/internal/telemetry"
 )
@@ -45,97 +44,39 @@ type SpanDataForTable struct {
 
 // NewSpanDataForTable creates a new SpanDataForTable.
 func NewSpanDataForTable(tcache *telemetry.TraceCache, spans *telemetry.SvcSpans, sortType *telemetry.SortType) SpanDataForTable {
-	t := SpanDataForTable{
-		tcache:   tcache,
-		spans:    spans,
-		sortType: sortType,
-		mapper:   defaultSpanCellMappers,
-	}
-	t.updateReceivedAtMapper()
-
-	return t
+	_ = "STUB: not implemented"
+	return *new(SpanDataForTable)
 }
 
 // SetFullDatetime sets the full datetime flag for the table.
-func (s *SpanDataForTable) SetFullDatetime(full bool) {
-	s.isFullDatetime = full
-	s.updateReceivedAtMapper()
-}
+func (s *SpanDataForTable) SetFullDatetime(full bool) { _ = "STUB: not implemented"; return }
 
 // IsFullDatetime returns the full datetime flag for the table.
-func (s SpanDataForTable) IsFullDatetime() bool {
-	return s.isFullDatetime
-}
+func (s SpanDataForTable) IsFullDatetime() bool { _ = "STUB: not implemented"; return false }
 
-func (s *SpanDataForTable) updateReceivedAtMapper() {
-	for k, m := range s.mapper {
-		if m.header == "Received At" {
-			m.getTextRowFn = func(data *telemetry.SpanData) string {
-				return data.GetReceivedAtText(s.isFullDatetime)
-			}
-			s.mapper[k] = m
-			break
-		}
-	}
-}
+func (s *SpanDataForTable) updateReceivedAtMapper() { _ = "STUB: not implemented"; return }
 
 // implementations for tview Virtual Table
 // see: https://github.com/rivo/tview/wiki/VirtualTable
 func (s SpanDataForTable) GetCell(row, column int) *tview.TableCell {
-	if row == 0 {
-		return s.getHeaderCell(column, *s.sortType)
-	}
-	if row > 0 && row <= len(*s.spans) {
-		sd := (*s.spans)[row-1]
-		if column == 0 {
-			return s.getErrorIndicator(sd)
-		}
-		return getCellFromData(s.mapper, sd, column)
-	}
-	return tview.NewTableCell("N/A")
+	_ = "STUB: not implemented"
+	return nil
 }
 
-func (s SpanDataForTable) GetRowCount() int {
-	return len(*s.spans) + 1
-}
+func (s SpanDataForTable) GetRowCount() int { _ = "STUB: not implemented"; return 0 }
 
-func (s SpanDataForTable) GetColumnCount() int {
-	return len(s.mapper) + 1 // including error indicator
-}
+func (s SpanDataForTable) GetColumnCount() int { _ = "STUB: not implemented"; return 0 }
+
+// including error indicator
 
 func (s SpanDataForTable) getErrorIndicator(span *telemetry.SpanData) *tview.TableCell {
-	if s.tcache == nil {
-		return tview.NewTableCell("")
-	}
-	text := ""
-	if sname, ok := span.ResourceSpan.Resource().Attributes().Get("service.name"); ok {
-		if haserr, ok := s.tcache.HasErrorByTraceIDAndSvc(span.Span.TraceID().String(), sname.AsString()); ok && haserr {
-			text = "[!]"
-		}
-	}
-	return tview.NewTableCell(text)
+	_ = "STUB: not implemented"
+	return nil
 }
 
 func (s SpanDataForTable) getHeaderCell(column int, sortType telemetry.SortType) *tview.TableCell {
-	cell := tview.NewTableCell("N/A").
-		SetSelectable(false).
-		SetTextColor(tcell.ColorYellow)
-	h, ok := s.mapper[column]
-	if !ok {
-		if column == 0 {
-			cell.SetText(" ") // Error indicator
-		}
-		return cell
-	}
-	if !sortType.IsNone() && sortType.GetHeaderLabel() == h.header {
-		if sortType.IsDesc() {
-			cell.SetText(h.header + " ▼")
-		} else {
-			cell.SetText(h.header + " ▲")
-		}
-		return cell
-	}
-	cell.SetText(h.header)
-
-	return cell
+	_ = "STUB: not implemented"
+	return nil
 }
+
+// Error indicator

@@ -12,17 +12,6 @@ type cellMapper[T any] struct {
 type cellMappers[T any] map[int]*cellMapper[T]
 
 func getCellFromData[T any](mappers cellMappers[T], data *T, column int) *tview.TableCell {
-	text := "N/A"
-
-	if cell, ok := mappers[column]; ok {
-		text = cell.getTextRowFn(data)
-	}
-
-	if text == "" {
-		text = "N/A"
-	}
-
-	text = tview.Escape(text)
-
-	return tview.NewTableCell(text)
+	_ = "STUB: not implemented"
+	return nil
 }

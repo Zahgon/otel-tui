@@ -8,11 +8,7 @@ const (
 )
 
 // GetSimpleTime returns a string representation of the time in the format "2006-01-02 15:04:05".
-func GetSimpleTime(t time.Time) string {
-	return t.Format(simple)
-}
+func GetSimpleTime(t time.Time) string { _ = "STUB: not implemented"; return "" }
 
 // GetFullTime returns a string representation of the time in the format "2006-01-02 15:04:05.000000Z07:00".
-func GetFullTime(t time.Time) string {
-	return t.Format(full)
-}
+func GetFullTime(t time.Time) string { _ = "STUB: not implemented"; return "" }

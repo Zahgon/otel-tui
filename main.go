@@ -2,17 +2,10 @@ package main
 
 import (
 	"log"
-	"os"
-	"path/filepath"
 
 	"github.com/spf13/cobra"
 	"go.opentelemetry.io/collector/component"
-	"go.opentelemetry.io/collector/confmap"
-	"go.opentelemetry.io/collector/confmap/provider/envprovider"
-	"go.opentelemetry.io/collector/confmap/provider/yamlprovider"
 	"go.opentelemetry.io/collector/otelcol"
-	"go.uber.org/zap"
-	"go.uber.org/zap/zapcore"
 
 	// Force dependency on main module to ensure it is unambiguous during
 	// module resolution.
@@ -36,12 +29,8 @@ func main() {
 }
 
 func runInteractive(params otelcol.CollectorSettings) error {
-	//cmd := otelcol.NewCommand(params)
-	cmd := newCommand(params)
-	if err := cmd.Execute(); err != nil {
-		log.Fatalf("collector server run finished with error: %v", err)
-	}
-
+	_ = "STUB: not implemented"
+	// cmd := otelcol.NewCommand(params)
 	return nil
 }
 
@@ -60,109 +49,21 @@ type collectorCommand struct {
 }
 
 func (c *collectorCommand) preRunE(cmd *cobra.Command, args []string) error {
-	logPath, err := setLoggingOptions(&c.params, c.debugLog)
-	if err != nil {
-		return err
-	}
-
-	cfg, err := NewConfig(
-		c.host,
-		c.httpPort,
-		c.grpcPort,
-		c.zipkinEnabled,
-		c.datadogEnabled,
-		c.fromJSONFile,
-		c.promTargets,
-		logPath,
-		c.disableInternalMetrics,
-		os.Getenv("AUTH_TOKEN"),
-	)
-
-	if err != nil {
-		return err
-	}
-
-	configContents, err := cfg.RenderYml()
-	if err != nil {
-		return err
-	}
-
-	configProviderSettings := otelcol.ConfigProviderSettings{
-		ResolverSettings: confmap.ResolverSettings{
-			URIs:              []string{configContents},
-			ProviderFactories: []confmap.ProviderFactory{yamlprovider.NewFactory(), envprovider.NewFactory()},
-		},
-	}
-
-	c.params.ConfigProviderSettings = configProviderSettings
+	_ = "STUB: not implemented"
 	return nil
 }
 
 func (c *collectorCommand) runE(cmd *cobra.Command, args []string) error {
-	col, err := otelcol.NewCollector(c.params)
-	if err != nil {
-		return err
-	}
-	return col.Run(cmd.Context())
+	_ = "STUB: not implemented"
+	return nil
 }
 
 func newCommand(params otelcol.CollectorSettings) *collectorCommand {
-	rootCmd := &collectorCommand{
-		Command: &cobra.Command{
-			Use:          params.BuildInfo.Command,
-			Version:      params.BuildInfo.Version,
-			SilenceUsage: true,
-			Long: `A terminal OpenTelemetry viewer
-
-Environment Variables:
-  AUTH_TOKEN    Bearer token for OTLP receiver authentication (applies to both HTTP and gRPC)`,
-		},
-		params:   params,
-		httpPort: 4318,
-		grpcPort: 4317,
-		host:     "0.0.0.0",
-	}
-
-	rootCmd.PreRunE = rootCmd.preRunE
-	rootCmd.RunE = rootCmd.runE
-
-	rootCmd.Flags().IntVar(&rootCmd.httpPort, "http", rootCmd.httpPort, "The port number on which we listen for OTLP http payloads")
-	rootCmd.Flags().IntVar(&rootCmd.grpcPort, "grpc", rootCmd.grpcPort, "The port number on which we listen for OTLP grpc payloads")
-	rootCmd.Flags().StringVar(&rootCmd.host, "host", rootCmd.host, "The host where we expose our OTLP endpoints")
-	rootCmd.Flags().BoolVar(&rootCmd.zipkinEnabled, "enable-zipkin", rootCmd.zipkinEnabled, "Enable the zipkin receiver")
-	rootCmd.Flags().BoolVar(&rootCmd.datadogEnabled, "enable-datadog", rootCmd.datadogEnabled, "Enable the Datadog and DogStatsD receivers")
-	rootCmd.Flags().StringVar(&rootCmd.fromJSONFile, "from-json-file", rootCmd.fromJSONFile, "The JSON file path exported by JSON exporter")
-	rootCmd.Flags().StringArrayVar(&rootCmd.promTargets, "prom-target", rootCmd.promTargets, `Enable the prometheus receiver and specify the target endpoints for the receiver (--prom-target "localhost:9000" --prom-target "http://other-host:9000/custom/prometheus")`)
-	rootCmd.Flags().BoolVar(&rootCmd.debugLog, "debug-log", rootCmd.debugLog, "Enable debug log output to file (/tmp/otel-tui.log)")
-	rootCmd.Flags().BoolVar(&rootCmd.disableInternalMetrics, "disable-internal-metrics", rootCmd.disableInternalMetrics, "Disable the collector's internal metrics telemetry reporting")
-	return rootCmd
+	_ = "STUB: not implemented"
+	return nil
 }
 
 func setLoggingOptions(params *otelcol.CollectorSettings, debugLogFlag bool) (logPath string, err error) {
-	if debugLogFlag {
-		logPath = filepath.Join(os.TempDir(), "otel-tui.log")
-
-		cfg := zap.NewProductionConfig()
-		cfg.OutputPaths = []string{logPath}
-		cfg.ErrorOutputPaths = []string{logPath}
-
-		logger, err := cfg.Build()
-		if err != nil {
-			return "", err
-		}
-		log.Printf("Debug log is enabled. Logs will be written to %s\n", logPath)
-
-		params.LoggingOptions = []zap.Option{
-			zap.WrapCore(func(zapcore.Core) zapcore.Core {
-				return logger.Core()
-			}),
-		}
-	} else {
-		params.LoggingOptions = []zap.Option{
-			zap.WrapCore(func(zapcore.Core) zapcore.Core {
-				return zapcore.NewNopCore()
-			}),
-		}
-	}
-	return
+	_ = "STUB: not implemented"
+	return "", nil
 }

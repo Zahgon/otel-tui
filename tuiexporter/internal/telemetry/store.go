@@ -1,15 +1,10 @@
 package telemetry
 
 import (
-	"fmt"
-	"strings"
 	"sync"
 	"time"
 
-	"github.com/icza/gox/timex"
 	"github.com/jonboulle/clockwork"
-	"github.com/ymtdzzz/otel-tui/tuiexporter/internal/datetime"
-	"go.opentelemetry.io/collector/pdata/pcommon"
 	"go.opentelemetry.io/collector/pdata/plog"
 	"go.opentelemetry.io/collector/pdata/pmetric"
 	"go.opentelemetry.io/collector/pdata/ptrace"
@@ -30,41 +25,23 @@ type SpanData struct {
 }
 
 // IsRoot returns true if the span is a root span
-func (sd *SpanData) IsRoot() bool {
-	return sd.Span.ParentSpanID().IsEmpty()
-}
+func (sd *SpanData) IsRoot() bool { _ = "STUB: not implemented"; return false }
 
-func (sd *SpanData) GetServiceName() string {
-	return GetServiceNameFromResource(sd.ResourceSpan.Resource())
-}
+func (sd *SpanData) GetServiceName() string { _ = "STUB: not implemented"; return "" }
 
-func (sd *SpanData) GetDurationText() string {
-	duration := sd.Span.EndTimestamp().AsTime().Sub(sd.Span.StartTimestamp().AsTime())
-	return timex.Round(duration, 2).String()
-}
+func (sd *SpanData) GetDurationText() string { _ = "STUB: not implemented"; return "" }
 
-func (sd *SpanData) GetReceivedAtText(full bool) string {
-	if full {
-		return datetime.GetFullTime(sd.ReceivedAt.Local())
-	}
-	return datetime.GetSimpleTime(sd.ReceivedAt.Local())
-}
+func (sd *SpanData) GetReceivedAtText(full bool) string { _ = "STUB: not implemented"; return "" }
 
-func (sd *SpanData) GetSpanName() string {
-	return sd.Span.Name()
-}
+func (sd *SpanData) GetSpanName() string { _ = "STUB: not implemented"; return "" }
 
 // SvcSpans is a slice of service spans
 // This is a slice of one span of a single service
 type SvcSpans []*SpanData
 
 func (ss *SvcSpans) replaceBySpanID(replaceSpanID string, data *SpanData) {
-	for i, s := range *ss {
-		if s.Span.SpanID().String() == replaceSpanID {
-			(*ss)[i] = data
-			return
-		}
-	}
+	_ = "STUB: not implemented"
+	return
 }
 
 // MetricData is a struct to represent a metric
@@ -76,37 +53,15 @@ type MetricData struct {
 }
 
 // HasNumberDatapoints returns whether it has number datapoints
-func (md *MetricData) HasNumberDatapoints() bool {
-	return md.Metric.Type() == pmetric.MetricTypeGauge || md.Metric.Type() == pmetric.MetricTypeSum
-}
+func (md *MetricData) HasNumberDatapoints() bool { _ = "STUB: not implemented"; return false }
 
-func (md *MetricData) GetServiceName() string {
-	return GetServiceNameFromResource(md.ResourceMetric.Resource())
-}
+func (md *MetricData) GetServiceName() string { _ = "STUB: not implemented"; return "" }
 
-func (md *MetricData) GetMetricName() string {
-	return md.Metric.Name()
-}
+func (md *MetricData) GetMetricName() string { _ = "STUB: not implemented"; return "" }
 
-func (md *MetricData) GetMetricTypeText() string {
-	return md.Metric.Type().String()
-}
+func (md *MetricData) GetMetricTypeText() string { _ = "STUB: not implemented"; return "" }
 
-func (md *MetricData) GetDataPointNum() string {
-	switch md.Metric.Type() {
-	case pmetric.MetricTypeGauge:
-		return fmt.Sprintf("%d", md.Metric.Gauge().DataPoints().Len())
-	case pmetric.MetricTypeSum:
-		return fmt.Sprintf("%d", md.Metric.Sum().DataPoints().Len())
-	case pmetric.MetricTypeHistogram:
-		return fmt.Sprintf("%d", md.Metric.Histogram().DataPoints().Len())
-	case pmetric.MetricTypeExponentialHistogram:
-		return fmt.Sprintf("%d", md.Metric.ExponentialHistogram().DataPoints().Len())
-	case pmetric.MetricTypeSummary:
-		return fmt.Sprintf("%d", md.Metric.Summary().DataPoints().Len())
-	}
-	return ""
-}
+func (md *MetricData) GetDataPointNum() string { _ = "STUB: not implemented"; return "" }
 
 // LogData is a struct to represent a log
 type LogData struct {
@@ -116,46 +71,23 @@ type LogData struct {
 	ReceivedAt  time.Time
 }
 
-func (l *LogData) GetResolvedBody() string {
-	b := l.Log.Body().AsString()
-	l.Log.Attributes().Range(func(k string, v pcommon.Value) bool {
-		b = strings.ReplaceAll(b, "{"+k+"}", v.AsString())
-		return true
-	})
+func (l *LogData) GetResolvedBody() string { _ = "STUB: not implemented"; return "" }
 
-	return b
-}
+func (l *LogData) GetTraceID() string { _ = "STUB: not implemented"; return "" }
 
-func (l *LogData) GetTraceID() string {
-	return l.Log.TraceID().String()
-}
+func (l *LogData) GetServiceName() string { _ = "STUB: not implemented"; return "" }
 
-func (l *LogData) GetServiceName() string {
-	return GetServiceNameFromResource(l.ResourceLog.Resource())
-}
+func (l *LogData) GetTimestampText(full bool) string { _ = "STUB: not implemented"; return "" }
 
-func (l *LogData) GetTimestampText(full bool) string {
-	if full {
-		return datetime.GetFullTime(l.Log.Timestamp().AsTime())
-	}
-	return datetime.GetSimpleTime(l.Log.Timestamp().AsTime())
-}
-
-func (l *LogData) GetSeverity() string {
-	return l.Log.SeverityText()
-}
+func (l *LogData) GetSeverity() string { _ = "STUB: not implemented"; return "" }
 
 func (l *LogData) GetEventName() string {
+	_ = "STUB: not implemented"
 	// see: https://github.com/open-telemetry/semantic-conventions/blob/a4fc971e0c7ffa4b9572654f075d3cb8560db770/docs/general/events.md#event-definition
-	if sname, ok := l.Log.Attributes().Get("event.name"); ok {
-		return sname.AsString()
-	}
 	return ""
 }
 
-func (l *LogData) GetRawData() string {
-	return l.Log.Body().AsString()
-}
+func (l *LogData) GetRawData() string { _ = "STUB: not implemented"; return "" }
 
 // Store is a store of trace spans
 type Store struct {
@@ -185,387 +117,119 @@ type Store struct {
 }
 
 // NewStore creates a new store
-func NewStore(clock clockwork.Clock) *Store {
-	return &Store{
-		mut:                 sync.Mutex{},
-		clockwork:           clock,
-		svcspans:            SvcSpans{},
-		svcspansFiltered:    SvcSpans{},
-		tracecache:          NewTraceCache(),
-		metrics:             []*MetricData{},
-		metricsFiltered:     []*MetricData{},
-		metriccache:         NewMetricCache(),
-		logs:                []*LogData{},
-		logsFiltered:        []*LogData{},
-		logcache:            NewLogCache(),
-		maxServiceSpanCount: MAX_SERVICE_SPAN_COUNT, // TODO: make this configurable
-		maxMetricCount:      MAX_METRIC_COUNT,       // TODO: make this configurable
-		maxLogCount:         MAX_LOG_COUNT,          // TODO: make this configurable
-	}
-}
+func NewStore(clock clockwork.Clock) *Store { _ = "STUB: not implemented"; return nil }
+
+// TODO: make this configurable
+// TODO: make this configurable
+// TODO: make this configurable
 
 // GetTraceCache returns the trace cache
-func (s *Store) GetTraceCache() *TraceCache {
-	return s.tracecache
-}
+func (s *Store) GetTraceCache() *TraceCache { _ = "STUB: not implemented"; return nil }
 
 // GetMetricCache returns the metric cache
-func (s *Store) GetMetricCache() *MetricCache {
-	return s.metriccache
-}
+func (s *Store) GetMetricCache() *MetricCache { _ = "STUB: not implemented"; return nil }
 
 // GetLogCache returns the log cache
 func (s *Store) GetLogCache() *LogCache {
-	return s.logcache
+	_ = "STUB: not implemented"
+
+	// GetSvcSpans returns the service spans in the store
+	return nil
 }
 
-// GetSvcSpans returns the service spans in the store
 func (s *Store) GetSvcSpans() *SvcSpans {
-	return &s.svcspans
+	_ = "STUB: not implemented"
+
+	// GetFilteredSvcSpans returns the filtered service spans in the store
+	return nil
 }
 
-// GetFilteredSvcSpans returns the filtered service spans in the store
-func (s *Store) GetFilteredSvcSpans() *SvcSpans {
-	return &s.svcspansFiltered
-}
+func (s *Store) GetFilteredSvcSpans() *SvcSpans { _ = "STUB: not implemented"; return nil }
 
 // GetFilteredMetrics returns the filetered metrics in the store
-func (s *Store) GetFilteredMetrics() *[]*MetricData {
-	return &s.metricsFiltered
-}
+func (s *Store) GetFilteredMetrics() *[]*MetricData { _ = "STUB: not implemented"; return nil }
 
 // GetFilteredLogs returns the filtered logs in the store
-func (s *Store) GetFilteredLogs() *[]*LogData {
-	return &s.logsFiltered
-}
+func (s *Store) GetFilteredLogs() *[]*LogData { _ = "STUB: not implemented"; return nil }
 
 // UpdatedAt returns the last updated time
 func (s *Store) UpdatedAt() time.Time {
-	return s.updatedAt
+	_ = "STUB: not implemented"
+
+	// SetOnSpanAdded sets the callback function to be called when a span is added
+	return *new(time.Time)
 }
 
-// SetOnSpanAdded sets the callback function to be called when a span is added
 func (s *Store) SetOnSpanAdded(f func()) {
-	s.onSpanAdded = f
+	_ = "STUB: not implemented"
+
+	// SetOnMetricAdded sets the callback function to be called when a metric is added
+	return
 }
 
-// SetOnMetricAdded sets the callback function to be called when a metric is added
-func (s *Store) SetOnMetricAdded(f func()) {
-	s.onMetricAdded = f
-}
+func (s *Store) SetOnMetricAdded(f func()) { _ = "STUB: not implemented"; return }
 
 // SetOnLogAdded sets the callback function to be called when a log is added
 func (s *Store) SetOnLogAdded(f func()) {
-	s.onLogAdded = f
+	_ = "STUB: not implemented"
+
+	// RegisterOnFlushed registers a callback function to be called when the store is flushed
+	return
 }
 
-// RegisterOnFlushed registers a callback function to be called when the store is flushed
-func (s *Store) RegisterOnFlushed(f func()) {
-	s.onFlushed = append(s.onFlushed, f)
-}
+func (s *Store) RegisterOnFlushed(f func()) { _ = "STUB: not implemented"; return }
 
 // ApplyFilterTraces applies a filter and sort to the traces
-func (s *Store) ApplyFilterTraces(svc string, sortType SortType) {
-	s.filterSvc = svc
-	s.sortTrace = sortType
-	s.svcspansFiltered = []*SpanData{}
+func (s *Store) ApplyFilterTraces(svc string, sortType SortType) { _ = "STUB: not implemented"; return }
 
-	if svc == "" {
-		s.svcspansFiltered = s.svcspans
-		sortSvcSpans(s.svcspansFiltered, sortType)
-		return
-	}
-
-	for _, span := range s.svcspans {
-		sname := GetServiceNameFromResource(span.ResourceSpan.Resource())
-		target := sname + " " + span.Span.Name()
-		if strings.Contains(target, svc) {
-			s.svcspansFiltered = append(s.svcspansFiltered, span)
-		}
-	}
-
-	sortSvcSpans(s.svcspansFiltered, sortType)
-}
-
-func (s *Store) updateFilterService() {
-	s.ApplyFilterTraces(s.filterSvc, s.sortTrace)
-}
+func (s *Store) updateFilterService() { _ = "STUB: not implemented"; return }
 
 // ApplyFilterMetrics applies a filter to the metrics
-func (s *Store) ApplyFilterMetrics(filter string) {
-	s.filterMetric = filter
-	s.metricsFiltered = []*MetricData{}
+func (s *Store) ApplyFilterMetrics(filter string) { _ = "STUB: not implemented"; return }
 
-	if filter == "" {
-		s.metricsFiltered = s.metrics
-		return
-	}
-
-	for _, metric := range s.metrics {
-		sname := GetServiceNameFromResource(metric.ResourceMetric.Resource())
-		target := sname + " " + metric.Metric.Name()
-		if strings.Contains(target, filter) {
-			s.metricsFiltered = append(s.metricsFiltered, metric)
-		}
-	}
-}
-
-func (s *Store) updateFilterMetrics() {
-	s.ApplyFilterMetrics(s.filterMetric)
-}
+func (s *Store) updateFilterMetrics() { _ = "STUB: not implemented"; return }
 
 // ApplyFilterLogs applies a filter to the logs
-func (s *Store) ApplyFilterLogs(filter string) {
-	s.filterLog = filter
-	s.logsFiltered = []*LogData{}
+func (s *Store) ApplyFilterLogs(filter string) { _ = "STUB: not implemented"; return }
 
-	if filter == "" {
-		s.logsFiltered = s.logs
-		return
-	}
-
-	for _, log := range s.logs {
-		sname := GetServiceNameFromResource(log.ResourceLog.Resource())
-		target := sname + " " + log.Log.Body().AsString()
-		if strings.Contains(target, filter) {
-			s.logsFiltered = append(s.logsFiltered, log)
-		}
-	}
-}
-
-func (s *Store) updateFilterLogs() {
-	s.ApplyFilterLogs(s.filterLog)
-}
+func (s *Store) updateFilterLogs() { _ = "STUB: not implemented"; return }
 
 // GetTraceIDByFilteredIdx returns the trace at the given index
-func (s *Store) GetTraceIDByFilteredIdx(idx int) string {
-	if idx >= 0 && idx < len(s.svcspansFiltered) {
-		return s.svcspansFiltered[idx].Span.TraceID().String()
-	}
-	return ""
-}
+func (s *Store) GetTraceIDByFilteredIdx(idx int) string { _ = "STUB: not implemented"; return "" }
 
 // GetFilteredServiceSpansByIdx returns the spans for a given service at the given index
 func (s *Store) GetFilteredServiceSpansByIdx(idx int) []*SpanData {
-	if idx < 0 || idx >= len(s.svcspansFiltered) {
-		return []*SpanData{}
-	}
-	span := s.svcspansFiltered[idx]
-	traceID := span.Span.TraceID().String()
-	sname := GetServiceNameFromResource(span.ResourceSpan.Resource())
-	spans, _ := s.tracecache.GetSpansByTraceIDAndSvc(traceID, sname)
-
-	return spans
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // RecalculateServiceRootSpanByIdx recalculates service root span of the specified index
-func (s *Store) RecalculateServiceRootSpanByIdx(idx int) {
-	s.mut.Lock()
-	defer func() {
-		s.updatedAt = s.clockwork.Now()
-		s.mut.Unlock()
-	}()
+func (s *Store) RecalculateServiceRootSpanByIdx(idx int) { _ = "STUB: not implemented"; return }
 
-	if idx < 0 || idx >= len(s.svcspansFiltered) {
-		return
-	}
-	traceID := s.svcspansFiltered[idx].Span.TraceID().String()
-	currentSpanID := s.svcspansFiltered[idx].Span.SpanID().String()
-	sname, ok := s.svcspansFiltered[idx].ResourceSpan.Resource().Attributes().Get("service.name")
-	if !ok {
-		return
-	}
-
-	spans := s.tracecache.tracesvc2spans[traceID][sname.AsString()]
-	spanMemo := make(map[string]bool)
-	for _, span := range spans {
-		spanMemo[span.Span.SpanID().String()] = true
-	}
-	for _, span := range spans {
-		parentSpanID := span.Span.ParentSpanID().String()
-		spanID := span.Span.SpanID().String()
-		if _, ok := spanMemo[parentSpanID]; !ok {
-			// TODO: Condider orphan span?
-			sd := s.tracecache.spanid2span[spanID]
-			s.svcspansFiltered[idx] = sd
-			s.svcspans.replaceBySpanID(currentSpanID, sd)
-		}
-	}
-}
+// TODO: Condider orphan span?
 
 // GetFilteredMetricByIdx returns the metric at the given index
-func (s *Store) GetFilteredMetricByIdx(idx int) *MetricData {
-	if idx < 0 || idx >= len(s.metricsFiltered) {
-		return nil
-	}
-	return s.metricsFiltered[idx]
-}
+func (s *Store) GetFilteredMetricByIdx(idx int) *MetricData { _ = "STUB: not implemented"; return nil }
 
 // GetFilteredLogByIdx returns the log at the given index
-func (s *Store) GetFilteredLogByIdx(idx int) *LogData {
-	if idx < 0 || idx >= len(s.logsFiltered) {
-		return nil
-	}
-	return s.logsFiltered[idx]
-}
+func (s *Store) GetFilteredLogByIdx(idx int) *LogData { _ = "STUB: not implemented"; return nil }
 
 // AddSpan adds spans to the store
-func (s *Store) AddSpan(traces *ptrace.Traces) {
-	s.mut.Lock()
-	defer func() {
-		s.updatedAt = s.clockwork.Now()
-		s.mut.Unlock()
-	}()
+func (s *Store) AddSpan(traces *ptrace.Traces) { _ = "STUB: not implemented"; return }
 
-	for rsi := 0; rsi < traces.ResourceSpans().Len(); rsi++ {
-		rs := traces.ResourceSpans().At(rsi)
+// FIXME: More efficient logic is needed
 
-		for ssi := 0; ssi < rs.ScopeSpans().Len(); ssi++ {
-			ss := rs.ScopeSpans().At(ssi)
-
-			for si := 0; si < ss.Spans().Len(); si++ {
-				span := ss.Spans().At(si)
-				sname := GetServiceNameFromResource(rs.Resource())
-				sd := &SpanData{
-					Span:         &span,
-					ResourceSpan: &rs,
-					ScopeSpans:   &ss,
-					ReceivedAt:   s.clockwork.Now(),
-				}
-				newtracesvc, replaceSpanID := s.tracecache.UpdateCache(sname, sd)
-				if newtracesvc {
-					s.svcspans = append(s.svcspans, sd)
-				} else if len(replaceSpanID) > 0 {
-					// FIXME: More efficient logic is needed
-					s.svcspans.replaceBySpanID(replaceSpanID, sd)
-				}
-			}
-		}
-	}
-
-	// data rotation
-	if len(s.svcspans) > s.maxServiceSpanCount {
-		deleteSpans := s.svcspans[:len(s.svcspans)-s.maxServiceSpanCount]
-
-		s.tracecache.DeleteCache(deleteSpans)
-
-		s.svcspans = s.svcspans[len(s.svcspans)-s.maxServiceSpanCount:]
-	}
-
-	s.updateFilterService()
-
-	if s.onSpanAdded != nil {
-		s.onSpanAdded()
-	}
-}
+// data rotation
 
 // AddMetric adds metrics to the store
-func (s *Store) AddMetric(metrics *pmetric.Metrics) {
-	s.mut.Lock()
-	defer func() {
-		s.updatedAt = s.clockwork.Now()
-		s.mut.Unlock()
-	}()
+func (s *Store) AddMetric(metrics *pmetric.Metrics) { _ = "STUB: not implemented"; return }
 
-	for rmi := 0; rmi < metrics.ResourceMetrics().Len(); rmi++ {
-		rm := metrics.ResourceMetrics().At(rmi)
-
-		for smi := 0; smi < rm.ScopeMetrics().Len(); smi++ {
-			sm := rm.ScopeMetrics().At(smi)
-
-			for si := 0; si < sm.Metrics().Len(); si++ {
-				sname := GetServiceNameFromResource(rm.Resource())
-				metric := sm.Metrics().At(si)
-				sd := &MetricData{
-					Metric:         &metric,
-					ResourceMetric: &rm,
-					ScopeMetric:    &sm,
-					ReceivedAt:     s.clockwork.Now(),
-				}
-				s.metrics = append(s.metrics, sd)
-				s.metriccache.UpdateCache(sname, sd)
-			}
-		}
-	}
-
-	// data rotation
-	if len(s.metrics) > s.maxMetricCount {
-		deleteMetrics := s.metrics[:len(s.metrics)-s.maxMetricCount]
-		s.metrics = s.metrics[len(s.metrics)-s.maxMetricCount:]
-
-		s.metriccache.DeleteCache(deleteMetrics)
-	}
-
-	s.updateFilterMetrics()
-
-	if s.onMetricAdded != nil {
-		s.onMetricAdded()
-	}
-}
+// data rotation
 
 // AddLog adds logs to the store
-func (s *Store) AddLog(logs *plog.Logs) {
-	s.mut.Lock()
-	defer func() {
-		s.updatedAt = s.clockwork.Now()
-		s.mut.Unlock()
-	}()
+func (s *Store) AddLog(logs *plog.Logs) { _ = "STUB: not implemented"; return }
 
-	for rli := 0; rli < logs.ResourceLogs().Len(); rli++ {
-		rl := logs.ResourceLogs().At(rli)
-
-		for sli := 0; sli < rl.ScopeLogs().Len(); sli++ {
-			sl := rl.ScopeLogs().At(sli)
-
-			for li := 0; li < sl.LogRecords().Len(); li++ {
-				lr := sl.LogRecords().At(li)
-				ld := &LogData{
-					Log:         &lr,
-					ResourceLog: &rl,
-					ScopeLog:    &sl,
-					ReceivedAt:  s.clockwork.Now(),
-				}
-				s.logs = append(s.logs, ld)
-				s.logcache.UpdateCache(ld)
-			}
-		}
-	}
-
-	// data rotation
-	if len(s.logs) > s.maxLogCount {
-		deleteLogs := s.logs[:len(s.logs)-s.maxLogCount]
-		s.logs = s.logs[len(s.logs)-s.maxLogCount:]
-
-		s.logcache.DeleteCache(deleteLogs)
-	}
-
-	s.updateFilterLogs()
-
-	if s.onLogAdded != nil {
-		s.onLogAdded()
-	}
-}
+// data rotation
 
 // Flush clears the store including the cache
-func (s *Store) Flush() {
-	s.mut.Lock()
-	defer func() {
-		s.updatedAt = s.clockwork.Now()
-		s.mut.Unlock()
-	}()
-
-	s.svcspans = SvcSpans{}
-	s.svcspansFiltered = SvcSpans{}
-	s.tracecache.flush()
-	s.metrics = []*MetricData{}
-	s.metricsFiltered = []*MetricData{}
-	s.metriccache.flush()
-	s.logs = []*LogData{}
-	s.logsFiltered = []*LogData{}
-	s.logcache.flush()
-	s.updatedAt = s.clockwork.Now()
-
-	for _, f := range s.onFlushed {
-		f()
-	}
-}
+func (s *Store) Flush() { _ = "STUB: not implemented"; return }
